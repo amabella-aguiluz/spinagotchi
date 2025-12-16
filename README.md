@@ -1,16 +1,30 @@
-# React + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# Spinagotchi
 
-Currently, two official plugins are available:
+A simple Tamagotchi-style desktop app based on my partner’s original character.  named Spinarosa.
+Built with **React** and **Tailwind CSS**, and packaged as a desktop application using **Electron.js**.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+##  About the Project
 
-## React Compiler
+This project is a digital Tamagotchi where you take care of a virtual character by managing three core stats. Each stat has a corresponding button that lets you raise it and keep your Tamagotchi happy and alive.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Stats
+- **Hunger** – Feed your Tamagotchi
+- **Love** – Show affection and care
+- **Energy** – Let the tamagotchi rest
 
-## Expanding the ESLint configuration
+Each stat decreases over time, and your tamagotchi will "die" if left alone for too long.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Main Screen
+![Spinagotchi Netural State](sc_1.png)
+
+### Happy / Healthy State
+![Spinagotchi Happy State](sc_2.png)
+
+## 
+
+### Tech Stack
+- **React** – UI and state management  
+- **Tailwind CSS** – Styling and layout  
+- **Electron.js** – Exporting the app as a desktop application
+
