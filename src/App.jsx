@@ -36,9 +36,14 @@ function App() {
       ...prev,
       [name]: clampStat(prev[name] + change)
     }));
+    setCurrentAction(null);
+    setTimeout(() => {
+      setCurrentAction(name);
 
-    setCurrentAction(name);
-    setTimeout(() => setCurrentAction(null), 2000);
+      setTimeout(() => {
+        setCurrentAction(prevAction => (prevAction === name ? null : prevAction));
+      }, 1000);
+    }, 0);
   };
 
   // stat decay
