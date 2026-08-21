@@ -74,7 +74,7 @@ function App() {
           {/* stat bars */}
           <div
             id="bar-holder"
-            className="p-[0.5rem] w-full flex flex-col items-center justify-center gap-2 shrink-0"
+            className="p-[0.5rem] w-full flex flex-col items-center justify-center gap-[0.5rem] shrink-0"
           >
             <StatBar icon={heartIcon} value={stats.love} />
             <StatBar icon={feedIcon} value={stats.hunger} />
@@ -96,7 +96,7 @@ function App() {
           {/* buttons */}
           <div
             id="button-frame"
-            className="w-full h-24 flex items-center justify-center bg-[#f4fbf8ff] shrink-0"
+            className="w-full h-24 z-20 flex items-center justify-center bg-[#f4fbf8ff] shrink-0"
           >
             <div
               id="button-rows"
