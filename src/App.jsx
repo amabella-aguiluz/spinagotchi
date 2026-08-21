@@ -1,61 +1,12 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 
-import heartIcon from './assets/icons/heart_icon.png'
-import feedIcon from './assets/icons/feed_icon.png'
-import sleepIcon from './assets/icons/sleep_icon.png'
-import base from './assets/sprites/base.png'
-import sprite1 from './assets/sprites/0.png'
-import sprite2 from './assets/sprites/1.png'
-import sprite3 from './assets/sprites/2.png'
-import sprite4 from './assets/sprites/3.png'
-import lovesprite from './assets/sprites/spritelove.png'
-import sleepsprite from './assets/sprites/spritesleep.png'
-import feedsprite from './assets/sprites/spritefeed.png'
-import deadsprite from './assets/sprites/spritedead.png'
+import { clampStat, calculateAvg } from './hooks/math'
+import { spriteAssets, getActiveSprite, statIcons } from './hooks/sprites'
+import { StatBar, StatButton } from './components/stats'
+import {Sprite} from './components/sprite'
+import { StatBarHolder, StatButtonHolder } from './components/stat-bars'
 
-
-{/* button component*/}
-function StatButton({ icon, statName, onClick }) {
-  return (
-    <button
-      onClick={() => onClick(statName, 10)}
-      className="w-[70px] h-[70px] p-[8px] flex items-center justify-center bg-transparent rounded-[15px] border-3 border-[#7c6dddff]"
-    >
-      <img src={icon} className="w-[45px] h-[45px]" />
-    </button>
-  )
-}
-
-{/* stat display*/}
-function StatBar({ icon, value }) {
-  const barWidth = 200
-  const fillWidth = (value / 100) * barWidth
-
-  let color
-  if (value >= 70) color = '#6AD871'
-  else if (value >= 40) color = '#FBE044'
-  else color = '#F38462'
-
-  return (
-    <div
-      id="mood_bar"
-      className="w-[280px] h-[25px] flex flex-row items-center gap-[6px] justify-center px-[15px] py-[3px]"
-    >
-      <img src={icon} alt="icon" className="w-[32px] h-[32px]" />
-      <div
-        id="bar_frame"
-        className="relative w-[200px] h-[25px] rounded-[20px] bg-[#f4fbf8ff] border-[#f4fbf8ff] border-3"
-      >
-        <div
-        // fills up the bar
-          className="h-full rounded-full transition-all duration-50"
-          style={{ width: `${fillWidth}px`, backgroundColor: color }}
-        />
-      </div>
-    </div>
-  )
-}
 
 function App() {
   // code
@@ -66,94 +17,57 @@ function App() {
     energy: 50
   })
 
-  const total = stats.hunger + stats.love + stats.energy
-  const average = total / 3
-
   const [currentAction, setCurrentAction] = useState(null)
+
+  const { average } = calculateAvg(stats);
 
   const updateStat = (name, change) => {
     setStats(prev => ({
       ...prev,
-      [name]: Math.min(100, Math.max(0, prev[name] + change))
-    }))
+      [name]: clampStat(prev[name] + change)
+    }));
+    setCurrentAction(null);
+    setTimeout(() => {
+      setCurrentAction(name);
 
-    setCurrentAction(name)
-    setTimeout(() => setCurrentAction(null), 2000)
-  }
+      setTimeout(() => {
+        setCurrentAction(prevAction => (prevAction === name ? null : prevAction));
+      }, 2000);
+    }, 0);
+  };
 
   // stat decay
   useEffect(() => {
     const interval = setInterval(() => {
       const randomDecay = Math.floor(Math.random() * 10);
       setStats(prev => ({
-        love: Math.max(0, prev.love - randomDecay),
-        hunger: Math.max(0, prev.hunger - randomDecay),
-        energy: Math.max(0, prev.energy - randomDecay)
-      }))
-    }, 200000)
-    return () => clearInterval(interval)
-  }, [])
+        love: clampStat(prev.love - randomDecay),
+        hunger: clampStat(prev.hunger - randomDecay),
+        energy: clampStat(prev.energy - randomDecay)
+      }));
+    }, 200000);
+    return () => clearInterval(interval);
+  }, []);
 
   // change sprite
-  let sprite
-  if (currentAction === 'love') sprite = lovesprite
-  else if (currentAction === 'hunger') sprite = feedsprite
-  else if (currentAction === 'energy') sprite = sleepsprite
-  else {
-    if (average >= 90) sprite = sprite1
-    else if (average >= 60) sprite = sprite2
-    else if (average >= 40) sprite = sprite3
-    else if (average == 0) sprite = deadsprite
-    else sprite = sprite4
-  }
+  const sprite = getActiveSprite(currentAction, average, spriteAssets);
 
   // visuals
   return (
-    <div className="w-screen h-screen relative flex items-center justify-center">
-      <div
-        id="home"
-        className="w-full max-w-[300px] h-[600px] flex flex-col items-center bg-gradient-to-b from-[#EFE5FF] to-[#908CFF] overflow-hidden rounded-2xl"
-      >
+    <div className="w-screen h-dvh flex items-center justify-center bg-black">
+      <div id="home" className="aspect-[9/16] h-full max-h-[90vh] max-w-sm mx-auto flex flex-col items-center bg-gradient-to-b from-[#EFE5FF] to-[#908CFF] overflow-hidden">
         <div id="main" className="w-full h-full flex flex-col items-center justify-between">
           {/* stat bars */}
-          <div
-            id="bar-holder"
-            className="w-[300px] h-[100px] mt-[10px] flex flex-col items-center justify-center py-[6px] gap-[6px]"
-          >
-            <StatBar icon={heartIcon} value={stats.love} />
-            <StatBar icon={feedIcon} value={stats.hunger} />
-            <StatBar icon={sleepIcon} value={stats.energy} />
-          </div>
+          <StatBarHolder stats={stats} statIcons={statIcons} />
 
           {/* sprite */}
-          <div id="character-frame" className="w-[300px] h-[350px] relative">
-            <img
-              src={base}
-              className="h-[360px] absolute bottom-0 left-1/2 transform -translate-x-1/2"
-            />
-            <img
-              src={sprite}
-              className="h-[360px] absolute bottom-0 left-1/2 transform -translate-x-1/2 z-10"
-            />
-          </div>
+          <Sprite sprite={sprite} />
 
           {/* buttons */}
-          <div
-            id="button-frame"
-            className="w-[300px] h-[110px] flex flex-col items-center justify-center bg-[#f4fbf8ff]"
-          >
-            <div
-              id="button-rows"
-              className="w-[260px] h-full justify-center items-center flex flex-row gap-[6px]"
-            >
-              <StatButton icon={heartIcon} statName="love" onClick={updateStat} />
-              <StatButton icon={feedIcon} statName="hunger" onClick={updateStat} />
-              <StatButton icon={sleepIcon} statName="energy" onClick={updateStat} />
-            </div>
+            <StatButtonHolder statIcons={statIcons} updateStat={updateStat} />
           </div>
         </div>
       </div>
-    </div>
   )
 }
 
