@@ -68,16 +68,13 @@ function App() {
 
   // visuals
   return (
-    <div className="w-screen h-screen relative flex items-center justify-center">
-      <div
-        id="home"
-        className="w-full max-w-[300px] h-[600px] flex flex-col items-center bg-gradient-to-b from-[#EFE5FF] to-[#908CFF] overflow-hidden rounded-2xl"
-      >
+    <div className="w-screen h-dvh flex items-center justify-center bg-black">
+      <div id="home" className="aspect-[9/16] h-full max-h-[90vh] max-w-sm mx-auto flex flex-col items-center bg-gradient-to-b from-[#EFE5FF] to-[#908CFF] overflow-hidden">
         <div id="main" className="w-full h-full flex flex-col items-center justify-between">
           {/* stat bars */}
           <div
             id="bar-holder"
-            className="w-[300px] h-[100px] mt-[10px] flex flex-col items-center justify-center py-[6px] gap-[6px]"
+            className="p-[0.5rem] w-full flex flex-col items-center justify-center gap-[0.5rem] shrink-0"
           >
             <StatBar icon={heartIcon} value={stats.love} />
             <StatBar icon={feedIcon} value={stats.hunger} />
@@ -85,25 +82,25 @@ function App() {
           </div>
 
           {/* sprite */}
-          <div id="character-frame" className="w-[300px] h-[350px] relative">
+          <div id="character-frame" className="w-full flex-1 min-h-0 py-2 relative">
             <img
               src={base}
-              className="h-[360px] absolute bottom-0 left-1/2 transform -translate-x-1/2"
+              className="max-h-full max-w-full object-contain absolute bottom-0 left-1/2 transform -translate-x-1/2"
             />
             <img
               src={sprite}
-              className="h-[360px] absolute bottom-0 left-1/2 transform -translate-x-1/2 z-10"
+              className="max-h-full max-w-full object-contain absolute bottom-0 left-1/2 transform -translate-x-1/2 z-10"
             />
           </div>
 
           {/* buttons */}
           <div
             id="button-frame"
-            className="w-[300px] h-[110px] flex flex-col items-center justify-center bg-[#f4fbf8ff]"
+            className="w-full h-24 z-20 flex items-center justify-center bg-[#f4fbf8ff] shrink-0"
           >
             <div
               id="button-rows"
-              className="w-[260px] h-full justify-center items-center flex flex-row gap-[6px]"
+              className="w-full h-full justify-center items-center flex flex-row gap-[0.5rem] p-[1rem]"
             >
               <StatButton icon={heartIcon} statName="love" onClick={updateStat} />
               <StatButton icon={feedIcon} statName="hunger" onClick={updateStat} />
