@@ -1,8 +1,5 @@
-{/* stat display*/}
+{/* stat display*/ }
 export function StatBar({ icon, value }) {
-  const barWidth = 200
-  const fillWidth = (value / 100) * barWidth
-
   let color
   if (value >= 70) color = '#6AD871'
   else if (value >= 40) color = '#FBE044'
@@ -11,31 +8,38 @@ export function StatBar({ icon, value }) {
   return (
     <div
       id="mood_bar"
-      className="w-[280px] h-[25px] flex flex-row items-center gap-[6px] justify-center px-[15px] py-[3px]"
+      className="w-[85%] max-w-xs flex flex-row items-center gap-2 justify-center px-3 py-0.5"
     >
-      <img src={icon} alt="icon" className="w-[32px] h-[32px]" />
-      <div
+      <img
+        src={icon}
+        alt="icon"
+        className="object-contain shrink-0"
+        style={{ width: '2.5rem', height: '2.5rem', minWidth: '2rem', minHeight: '2rem' }}
+      />      <div
         id="bar_frame"
-        className="relative w-[200px] h-[25px] rounded-[20px] bg-[#f4fbf8ff] border-[#f4fbf8ff] border-3"
+        className="relative flex-1 h-[1.5rem] rounded-full bg-[#f4fbf8ff] border-3 border-[#f4fbf8ff] overflow-hidden"
       >
         <div
-        // fills up the bar
-          className="h-full rounded-full transition-all duration-50"
-          style={{ width: `${fillWidth}px`, backgroundColor: color }}
+          className="h-full rounded-full transition-all duration-300 ease-out"
+          style={{ width: `${value}%`, backgroundColor: color }}
         />
       </div>
     </div>
   )
 }
 
-{/* button component*/}
+{/* button component*/ }
 export function StatButton({ icon, statName, onClick }) {
   return (
     <button
       onClick={() => onClick(statName, 10)}
-      className="w-[70px] h-[70px] p-[8px] flex items-center justify-center bg-transparent rounded-[15px] border-3 border-[#7c6dddff]"
+      className="w-[2rem] h-[2rem] p-[2.5rem] flex items-center justify-center bg-transparent rounded-[1rem] border-3 border-[#7c6dddff]"
     >
-      <img src={icon} className="w-[45px] h-[45px]" />
+      <img
+        src={icon}
+        alt={statName}
+        className="object-contain w-[3.5rem] h-[3.5rem]"
+      />
     </button>
   )
 }
