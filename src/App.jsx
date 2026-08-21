@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 
-import heartIcon from './assets/icons/heart_icon.png'
+import heartIcon from './assets/icons/love_icon.png'
 import feedIcon from './assets/icons/feed_icon.png'
 import sleepIcon from './assets/icons/sleep_icon.png'
 import base from './assets/sprites/base.png'
@@ -9,53 +9,14 @@ import sprite1 from './assets/sprites/0.png'
 import sprite2 from './assets/sprites/1.png'
 import sprite3 from './assets/sprites/2.png'
 import sprite4 from './assets/sprites/3.png'
-import lovesprite from './assets/sprites/spritelove.png'
-import sleepsprite from './assets/sprites/spritesleep.png'
-import feedsprite from './assets/sprites/spritefeed.png'
-import deadsprite from './assets/sprites/spritedead.png'
+import love from './assets/sprites/love.png'
+import sleep from './assets/sprites/sleep.png'
+import feed from './assets/sprites/feed.png'
+import dead from './assets/sprites/dead.png'
 
+import { clampStat, calculateAvg, getActiveSprite } from './hooks/utils'
+import { StatBar, StatButton } from './components/stats'
 
-{/* button component*/}
-function StatButton({ icon, statName, onClick }) {
-  return (
-    <button
-      onClick={() => onClick(statName, 10)}
-      className="w-[70px] h-[70px] p-[8px] flex items-center justify-center bg-transparent rounded-[15px] border-3 border-[#7c6dddff]"
-    >
-      <img src={icon} className="w-[45px] h-[45px]" />
-    </button>
-  )
-}
-
-{/* stat display*/}
-function StatBar({ icon, value }) {
-  const barWidth = 200
-  const fillWidth = (value / 100) * barWidth
-
-  let color
-  if (value >= 70) color = '#6AD871'
-  else if (value >= 40) color = '#FBE044'
-  else color = '#F38462'
-
-  return (
-    <div
-      id="mood_bar"
-      className="w-[280px] h-[25px] flex flex-row items-center gap-[6px] justify-center px-[15px] py-[3px]"
-    >
-      <img src={icon} alt="icon" className="w-[32px] h-[32px]" />
-      <div
-        id="bar_frame"
-        className="relative w-[200px] h-[25px] rounded-[20px] bg-[#f4fbf8ff] border-[#f4fbf8ff] border-3"
-      >
-        <div
-        // fills up the bar
-          className="h-full rounded-full transition-all duration-50"
-          style={{ width: `${fillWidth}px`, backgroundColor: color }}
-        />
-      </div>
-    </div>
-  )
-}
 
 function App() {
   // code
@@ -66,46 +27,44 @@ function App() {
     energy: 50
   })
 
-  const total = stats.hunger + stats.love + stats.energy
-  const average = total / 3
-
   const [currentAction, setCurrentAction] = useState(null)
+
+  const { average } = calculateAvg(stats);
 
   const updateStat = (name, change) => {
     setStats(prev => ({
       ...prev,
-      [name]: Math.min(100, Math.max(0, prev[name] + change))
-    }))
+      [name]: clampStat(prev[name] + change)
+    }));
 
-    setCurrentAction(name)
-    setTimeout(() => setCurrentAction(null), 2000)
-  }
+    setCurrentAction(name);
+    setTimeout(() => setCurrentAction(null), 2000);
+  };
 
   // stat decay
   useEffect(() => {
     const interval = setInterval(() => {
       const randomDecay = Math.floor(Math.random() * 10);
       setStats(prev => ({
-        love: Math.max(0, prev.love - randomDecay),
-        hunger: Math.max(0, prev.hunger - randomDecay),
-        energy: Math.max(0, prev.energy - randomDecay)
-      }))
-    }, 200000)
-    return () => clearInterval(interval)
-  }, [])
+        love: clampStat(prev.love - randomDecay),
+        hunger: clampStat(prev.hunger - randomDecay),
+        energy: clampStat(prev.energy - randomDecay)
+      }));
+    }, 200000);
+    return () => clearInterval(interval);
+  }, []);
 
   // change sprite
-  let sprite
-  if (currentAction === 'love') sprite = lovesprite
-  else if (currentAction === 'hunger') sprite = feedsprite
-  else if (currentAction === 'energy') sprite = sleepsprite
-  else {
-    if (average >= 90) sprite = sprite1
-    else if (average >= 60) sprite = sprite2
-    else if (average >= 40) sprite = sprite3
-    else if (average == 0) sprite = deadsprite
-    else sprite = sprite4
-  }
+  const sprite = getActiveSprite(currentAction, average, {
+    love,
+    feed,
+    sleep,
+    sprite1,
+    sprite2,
+    sprite3,
+    sprite4,
+    dead
+  });
 
   // visuals
   return (
